@@ -165,7 +165,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "[ ${CI} ] || swiftlint\n";
+			shellScript = "if [[ $(uname -m) == 'arm64' ]]; then\n  export PATH=\"$PATH:/opt/homebrew/bin\"\nfi\n[ ${CI} ] || swiftlint\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 

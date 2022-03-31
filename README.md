@@ -23,6 +23,8 @@ Download the latest release <a href="https://github.com/ivoronin/TomatoBar/relea
 ## Older versions
 Touch bar integration and older macOS versions (earlier than Big Sur) are supported by TomatoBar versions prior to 3.0
 
+## Building
+swiftlint is required, you can install it via homebrew `brew install swiftlint` after which you can just build using the Xcode project.
 
 ## Licenses
  - Timer sounds are licensed from buddhabeats
