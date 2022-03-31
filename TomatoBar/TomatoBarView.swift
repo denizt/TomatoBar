@@ -45,6 +45,14 @@ public struct TomatoBarView: View {
                         timer.toggleTickingAction()
                     }
             }
+            Button {
+                NSApplication.shared.terminate(self)
+            } label: {
+                Text("Quit")
+                    .frame(maxWidth: .infinity)
+            }
+            .controlSize(.large)
+            .padding(.bottom, 4)
         }
         .padding(12)
     }
