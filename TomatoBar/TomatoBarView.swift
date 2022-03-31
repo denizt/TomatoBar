@@ -14,10 +14,17 @@ public struct TomatoBarView: View {
             }
             .controlSize(.large)
             .keyboardShortcut(.defaultAction)
+            .padding(.top, 4)
             Divider()
             Toggle(isOn: $timer.stopAfterBreak) {
                 Text("Stop after break").frame(maxWidth: .infinity, alignment: .leading)
             }.toggleStyle(.switch)
+            Toggle(isOn: $timer.displayInMenuBar) {
+                Text("Display timer in menu bar").frame(maxWidth: .infinity, alignment: .leading)
+            }.toggleStyle(.switch)
+                .onChange(of: timer.displayInMenuBar) { _ in
+                    timer.toggleMenuBar()
+                }
             Stepper(value: $timer.workIntervalLength, in: 1 ... 60) {
                 Text("Work interval:").frame(maxWidth: .infinity, alignment: .leading)
                 Text("\(timer.workIntervalLength) min")
