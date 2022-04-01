@@ -25,13 +25,26 @@ public struct TomatoBarView: View {
                 .onChange(of: timer.displayInMenuBar) { _ in
                     timer.toggleMenuBar()
                 }
-            Stepper(value: $timer.workIntervalLength, in: 1 ... 60) {
-                Text("Work interval:").frame(maxWidth: .infinity, alignment: .leading)
-                Text("\(timer.workIntervalLength) min")
-            }
-            Stepper(value: $timer.restIntervalLength, in: 1 ... 60) {
-                Text("Rest interval:").frame(maxWidth: .infinity, alignment: .leading)
-                Text("\(timer.restIntervalLength) min")
+            Group {
+                Stepper(value: $timer.workIntervalLength, in: 1...60) {
+                    Text("Work interval:").frame(maxWidth: .infinity, alignment: .leading)
+                    Text("\(timer.workIntervalLength) min")
+                }
+                Stepper(value: $timer.shortRestInterval, in: 1...60) {
+                    Text("Short rest interval:").frame(maxWidth: .infinity, alignment: .leading)
+                    Text("\(timer.shortRestInterval) min")
+                }
+                Stepper(value: $timer.longRestInterval, in: 1...60) {
+                    Text("Long rest interval:").frame(maxWidth: .infinity, alignment: .leading)
+                    Text("\(timer.longRestInterval) min")
+                }
+                Stepper(value: $timer.shortToLongBreakCounter, in: 1...3) {
+                    Text("Short rest count:").frame(maxWidth: .infinity, alignment: .leading)
+                    Text("\(timer.shortToLongBreakCounter) times").onChange(of: timer.shortToLongBreakCounter) { _ in
+                        timer.updateBreakCounter()
+                    }
+                }
+                // Text("Remaining short breaks: \(timer.shortToLongBreakCounterLocal)")
             }
             Divider()
             Text("Sounds:")

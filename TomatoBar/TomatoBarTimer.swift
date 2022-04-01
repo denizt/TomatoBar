@@ -13,10 +13,13 @@ public class TomatoBarTimer: ObservableObject {
     @AppStorage("stopAfterBreak") public var stopAfterBreak = false
     @AppStorage("displayInMenuBar") public var displayInMenuBar = true
     @AppStorage("workIntervalLength") public var workIntervalLength = 25
-    @AppStorage("restIntervalLength") public var restIntervalLength = 5
+    @AppStorage("shortRestIntervalLength") public var shortRestInterval = 5
+    @AppStorage("longRestIntervalLength") public var longRestInterval = 15
+    @AppStorage("shortToLongBreakCounter") public var shortToLongBreakCounter = 3
 
     @Published var startStopString: String = "Start"
 
+    public var shortToLongBreakCounterLocal = 0
     private var stateMachine = TomatoBarStateMachine(state: .ready)
     private var statusBarItem: NSStatusItem? {
         return AppDelegate.shared.statusBarItem
@@ -47,6 +50,7 @@ public class TomatoBarTimer: ObservableObject {
          *                    timerFired (stopAfterBreak)
          *
          */
+        updateBreakCounter()
         stateMachine.addRoute(.ready => .idle)
         stateMachine.addRoutes(event: .startStop, transitions: [
             .idle => .work, .work => .idle, .rest => .idle,
@@ -83,6 +87,12 @@ public class TomatoBarTimer: ObservableObject {
         if stateMachine.state == .work {
             player.toggleTicking()
         }
+    }
+
+    public func updateBreakCounter() {
+        // keeping logic simple, we might want to change it so it 'updates' count
+        // but it seems overly complex or I am missing something
+        shortToLongBreakCounterLocal = shortToLongBreakCounter
     }
 
     public func toggleMenuBar() {
@@ -141,7 +151,11 @@ public class TomatoBarTimer: ObservableObject {
     }
 
     private func onWorkFinish(context _: TomatoBarContext) {
-        sendNotification(title: "Time's up", body: "It's time for a break!")
+        if shortToLongBreakCounterLocal == 0 {
+            sendNotification(title: "Time's up", body: "It's time for a long break!")
+        } else {
+            sendNotification(title: "Time's up", body: "It's time for a break!")
+        }
         if isDingEnabled {
             player.playDing()
         }
@@ -152,7 +166,13 @@ public class TomatoBarTimer: ObservableObject {
     }
 
     private func onRestStart(context _: TomatoBarContext) {
-        startTimer(seconds: restIntervalLength * 60)
+        if shortToLongBreakCounterLocal > 0 {
+            startTimer(seconds: shortRestInterval * 60)
+            shortToLongBreakCounterLocal -= 1
+        } else {
+            startTimer(seconds: longRestInterval * 60)
+            shortToLongBreakCounterLocal = shortToLongBreakCounter
+        }
     }
 
     private func onRestFinish(context _: TomatoBarContext) {
